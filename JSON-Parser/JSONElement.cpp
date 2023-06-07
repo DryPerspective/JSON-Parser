@@ -90,20 +90,36 @@ JSONElement JSONElement::operator[](std::size_t index) const {
 	* "a" : [{"b":1,"c":2}]
 	* "a" : [{"b":1,"c":2},{"b":3,"c":4}]
 	* ""  : {"b":1,"c":2}
-	We want to split the terms using a comma as a delimiter, making sure only to get the "top level" commas (e.g so the third example above is split into two terms, not four)
-
+	We want to delimit the terms by the "top level" commas. This is simple for all but example 3, as that must be parsed as having 2 terms and not four
 	*/
-	std::vector<std::size_t> commaPos;
-	commaPos.reserve(commaCount);
-	std::size_t braceCount = 0;
+	bool isComplexList = false ;	//Whether we're dealing with a list of form 3
+	//We detect complex lists in a simple way - if we find a closing } and the next non-WS character is a comma, we're in a complex list.
 
-	for (std::size_t i = 0; i < m_value.length(); ++i) {
-		if (m_value[i] == '{') ++braceCount;
-		if (m_value[i] == '}') --braceCount;
-		if (braceCount == 0 && m_value[i] == ',') commaPos.push_back(i);
+	bool listFlag = false;
+	for(std::string::const_iterator i = m_value.begin(); i != m_value.end(); ++i){
+		if (*i == '}') listFlag = true;
+		else if (listFlag && *i != ',') {
+			if (std::isspace(*i)) continue;
+			else listFlag = false;
+		}
+		else if (listFlag && *i == ',') {
+			isComplexList = true;
+			break;
+		}	
 	}
 
-	//These three possibilities all play out the same way - grab the term between
+	std::vector<std::size_t> commaPos;
+	commaPos.reserve(commaCount);
+	//"a":[1,2,3]
+	if (squareCount > 0 && braceCount == 0) {
+		for (int i = 0; i < m_value.length(); ++i) {
+			if (m_value[i] == ',') commaPos.push_back(i);
+		}
+	}
+
+
+
+
 
 
 
