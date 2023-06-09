@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 
-#ifndef JSONJSONWriter_03_WRITER
-#define JSONJSONWriter_03_WRITER
+#ifndef JSON_03_WRITER
+#define JSON_03_WRITER
 //---------------------------------------------------------------------------
 #include <vector>
 #include <string>
